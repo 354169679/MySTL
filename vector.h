@@ -128,26 +128,27 @@ public:
         if (base_::M_end_of_strage != base_::M_finish)
         {
             _construct(base_::_finish, val);
-            base_::M_finish++;
+            ++base_::M_finish;
         }
         else
         {
             M_insert_aux(end(), val);
         }
     }
-
 };
 
-
-template<typename T,typename Alloc>
-void vector<T,Alloc>::M_insert_aux(iterator position,const T& val)
+template <typename T, typename Alloc>
+void vector<T, Alloc>::M_insert_aux(iterator position, const T &val)
 {
     if (base_::M_end_of_strage != base_::M_finish)
-        {
-            _construct(base_::_finish, val);
-            base_::M_finish++;
-        }
-        else
+    {
+        _construct(M_finish, *(M_finish-1));
+        for (;position!=)
+    }
+    else
+    {
+
+    }
 }
 
 #endif

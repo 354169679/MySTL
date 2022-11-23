@@ -3,6 +3,7 @@
 
 #include <new>
 #include <utility>
+#include <memory>
 
 //理解析构和构造的详细过程，是怎么进行的
 
