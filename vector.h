@@ -38,7 +38,7 @@ public:
     {
         M_start = M_allocate(n);
         M_finish = M_start;
-        M_end_of_strage = M_start + n; //内存++根据变量大小
+        M_end_of_strage = M_start + n;//内存++根据变量大小
     }
 
     ~vector_base()
