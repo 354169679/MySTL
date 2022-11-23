@@ -26,15 +26,13 @@ protected:
         M_data_allocator::deallocate(p, n);
     }
 
-public:
     allocator_type get_allocator() const
     {
         return allocator_type();
     }
 
     vector_base() : M_start(nullptr), M_finish(nullptr), M_end_of_strage(nullptr) {}
-    vector_base(const allocator_type &) : M_start(nullptr), M_finish(nullptr), M_end_of_strage(nullptr) {}
-    vector_base(size_t n, const allocator_type &)
+    vector_base(size_t n)
     {
         M_start = M_allocate(n);
         M_finish = M_start;
@@ -48,21 +46,28 @@ public:
     }
 };
 
-template <typename T, typename Alloc = malloc_alloc>
-class vector : protected vector_base<T, Alloc> // usage of "protected"
+template <typename T, typename Alloc = _malloc_allocate<0>>//Alloc depends what allocator will be used
+class vector : protected vector_base<T, Alloc> // usage of template "protected"
 {
 private:
 public:
     using iterator = T *;
     using const_iterator = const T *;
     using size_type = size_t;
-
-public:
+    using reference = T &;
+    using const_reference = const T &;
     using base_ = vector_base<T, Alloc>;
     using allocator_type = typename base_::allocator_type; // usage of "using"
 
-    allocator_type
-    get_allocator() const
+public:
+    vector() = default;
+    vector(const Alloc &a) : base_(a) {}
+    vector(size_type n, const Alloc &a) : base_(n, a){}//allocate N of T item 
+    
+
+public:
+    
+    allocator_type get_allocator() const
     {
         return base_::get_allocator(); // usage funcation of base;
     }
@@ -94,18 +99,32 @@ public:
 
     size_type size() const
     {
-        return static_cast<size_type>(base_::M_finish - base_::M_start);
+        return static_cast<size_type>(end()-begin());
     }
 
     size_type capacity() const
     {
-        return static_cast<size_type>(base_::M_end_of_strage - base_::M_start);
+        return static_cast<size_type>(base_::M_end_of_strage-begin());
     }
 
     bool empty() const
     {
-        return base_::M_start == base_::M_finish;
+        return end()==begin();
     }
+
+    reference operator[](size_type index)
+    {
+        return *(base_::M_start + index);
+    }
+
+    reference operator[](size_type index)const
+    {
+        return *(base_::M_start + index);
+    }
+
+
+
+
 };
 
 #endif
