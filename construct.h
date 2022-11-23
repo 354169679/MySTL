@@ -61,15 +61,15 @@ struct _construct_aux<true>
 
 
 
-// template <typename _Iterator>
-// inline void _Destroy(_Iterator _first, _Iterator _last)
-// {
-//     using _Value_Type =typename iterator_traits<_Iterator>::value_type;
-//     //__has_trivial_destructor是编译器内置函数，判断是否有自定义析构函数
-//     //如果是默认析构函数，则析构函数体内什么也不执行，return 1
-//     //如果是自定义析构函数，return 0
-//     _construct_aux<__has_trivial_destructor(_Value_Type)>::_destroy(_first, _last); 
-// }
+template <typename _Iterator>
+inline void _Destroy(_Iterator _first, _Iterator _last)
+{
+    using _Value_Type =typename iterator_traits<_Iterator>::value_type;
+    //__has_trivial_destructor是编译器内置函数，判断是否有自定义析构函数
+    //如果是默认析构函数，则析构函数体内什么也不执行，return 1
+    //如果是自定义析构函数，return 0
+    _construct_aux<__has_trivial_destructor(_Value_Type)>::_destroy(_first, _last); 
+}
 
 
 
