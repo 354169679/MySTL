@@ -68,11 +68,13 @@ public:
     }
 
     //踩坑记录
+    //why use "base_::M_start"
+    // return M_start;  error!!!!
     iterator begin()
     {
-        // return M_start;  error!!!!
+        
         return base_::M_start;
-        // return this->M_start;
+        // or return this->M_start;
     }
 
     iterator end()
@@ -92,12 +94,12 @@ public:
 
     size_type size() const
     {
-        return (size_type)(base_::M_finish - base_::M_start);
+        return static_cast<size_type>(base_::M_finish - base_::M_start);
     }
 
     size_type capacity() const
     {
-        return (size_type)(base_::M_end_of_strage - base_::M_start);
+        return static_cast<size_type>(base_::M_end_of_strage - base_::M_start);
     }
 
     bool empty() const
