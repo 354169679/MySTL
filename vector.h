@@ -60,6 +60,9 @@ public:
     using base_ = vector_base<T, Alloc>;
     using allocator_type = typename base_::allocator_type; // usage of "using"
 
+private:
+    void M_insert_aux(iterator, const T &);
+
 public:
     vector() = default;
     vector(const Alloc &a) : base_(a) {}
@@ -129,11 +132,22 @@ public:
         }
         else
         {
-            
+            M_insert_aux(end(), val);
         }
     }
 
-private:
 };
+
+
+template<typename T,typename Alloc>
+void vector<T,Alloc>::M_insert_aux(iterator position,const T& val)
+{
+    if (base_::M_end_of_strage != base_::M_finish)
+        {
+            _construct(base_::_finish, val);
+            base_::M_finish++;
+        }
+        else
+}
 
 #endif
