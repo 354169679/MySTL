@@ -10,8 +10,19 @@ void uninitialized_fill(ForwardIterator _first,ForwardIterator _last,const T_val
     while (_first!=_last)
     {
         _construct(&(*_first), val);
+        ++_first;
     }
 }
 
+template<typename InputIter,typename DesIter>
+void uninitialized_copy(InputIter _first,InputIter _last,DesIter _destination)
+{
+    while (_first!=_last)
+    {
+        _construct(&(*_first), *_destination);
+        ++_destination;
+        ++_first;
+    }
+}
 
 #endif
