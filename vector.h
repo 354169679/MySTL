@@ -59,15 +59,15 @@ public:
     using size_type = size_t;
     using reference = T &;
     using const_reference = const T &;
-    using base = vector_base<T, Alloc>;
-    using allocator_type = typename base::allocator_type; // usage of "using"
+    using base_ = vector_base<T, Alloc>;
+    using allocator_type = typename base_::allocator_type; // usage of "using"
 
 protected: //使用using
-    using base::M_allocate;
-    using base::M_deallocate;
-    using base::M_end_of_strage;
-    using base::M_finish;
-    using base::M_start;
+    using base_::M_allocate;
+    using base_::M_deallocate;
+    using base_::M_end_of_strage;
+    using base_::M_finish;
+    using base_::M_start;
 
 private:
     void M_insert_aux(iterator, const T &);
@@ -95,12 +95,17 @@ private:
 
 public:
     vector() = default;
-    vector(const Alloc &a) : base(a) {}
-    vector(size_t n, const Alloc &a) : base(n, a) {} // allocate N of T item
-
+    vector(const Alloc &a) : base_(a) {}
+    vector(size_t n, const Alloc &a) : base_(n, a) {} // allocate N of T item
+    vector(size_t n,const T& val)
+    {
+        M_start= M_allocate(n);
+        M_finish = M_end_of_strage = M_start + n;
+        uninitialized_fill(M_start, M_finish, val);
+    }
     allocator_type get_allocator() const
     {
-        return base::get_allocator(); // usage funcation of base;
+        return base_::get_allocator(); // usage funcation of base_;
     }
 
     //踩坑记录

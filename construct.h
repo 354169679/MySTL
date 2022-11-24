@@ -31,7 +31,7 @@ inline void construct(T *p, Args &&...args)
 template <typename T>
 inline void Destroy(T *p)
 {
-   p->~_T();//这里调用析构函数后会free掉内存吗？
+   p->~T();//这里调用析构函数后会free掉内存吗？
 }
 
 //为什么要有_construct_aux？
@@ -62,15 +62,16 @@ struct construct_aux<true>
 
 
 
-// template <typenameIterator>
-// inline voidDestroy(_Iteratorfirst,Iteratorlast)
-// {
-//     usingValue_Type =typename iterator_traits<_Iterator>::value_type;
-//     //__has_trivial_destructor是编译器内置函数，判断是否有自定义析构函数
-//     //如果是默认析构函数，则析构函数体内什么也不执行，return 1
-//     //如果是自定义析构函数，return 0
-//    construct_aux<__has_trivial_destructor(_Value_Type)>::_destroy(_first,last); 
-// }
+template <typename Iterator>
+inline void Destroy(Iterator first,Iterator last)
+{
+    
+    using Value_Type =typename iterator_traits<Iterator>::value_type;
+    //__has_trivial_destructor是编译器内置函数，判断是否有自定义析构函数
+    //如果是默认析构函数，则析构函数体内什么也不执行，return 1
+    //如果是自定义析构函数，return 0
+   construct_aux<__has_trivial_destructor(Value_Type)>::destroy(first,last); 
+}
 
 
 

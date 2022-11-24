@@ -1,4 +1,4 @@
-#include "Thread.h"
+
 #include "vector.h"
 #include <iostream>
 
@@ -17,7 +17,7 @@ public:
 
 int main()
 {
-    vector<int> a;
-    std::cout << a.capacity();
-    std::vector<int>().
+    std::vector<int> a;
+
+    
 }
