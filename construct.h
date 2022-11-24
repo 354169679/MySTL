@@ -13,25 +13,25 @@
 //3.placement new(属于operator new的一种特殊用法，是operator new的特殊重载类型)
 
 // placement new 的new函数重载类型是
-// void *operator new(size_t __n,void* __p)
+// void *operator new(size_t_n,void*_p)
 
 
-template <typename _T>
-inline void _construct_no_value(_T *_p)
+template <typename T>
+inline void construct_no_value(T *p)
 {
-    ::new (static_cast<void*>(_p)) _T;
+    ::new (static_cast<void*>(p))T;
 }
 
-template <typename _T, typename... Args>
-inline void _construct(_T *_p, Args &&...args)
+template <typename T, typename... Args>
+inline void construct(T *p, Args &&...args)
 {
-    ::new (static_cast<void *>(_p)) _T(std::forward<Args>(args)...);
+    ::new (static_cast<void *>(p))T(std::forward<Args>(args)...);
 }
 
-template <typename _T>
-inline void _Destroy(_T *_p)
+template <typename T>
+inline void Destroy(T *p)
 {
-    _p->~_T();//这里调用析构函数后会free掉内存吗？
+   p->~_T();//这里调用析构函数后会free掉内存吗？
 }
 
 //为什么要有_construct_aux？
@@ -39,22 +39,22 @@ inline void _Destroy(_T *_p)
 //反之，如果特定定义了析构函数，则说明需要在释放空间之前做一些事情，则这个析构函数称为non-trivial destructor。
 //如果某个类中只有基本类型的话是没有必要调用析构函数的，delete p的时候基本不会产生析构代码。
 template <bool>
-struct _construct_aux
+struct construct_aux
 {
-    template <typename _Iterator>
-    static inline void _destroy(_Iterator _first, _Iterator _end)
+    template <typename Iterator>
+    static inline void destroy(Iterator first,Iterator last)
     {
-        for (; _first != _end; ++_first)
-            _Destroy(&*_first);
+        for (;first !=last; ++first)
+           Destroy(&*first);
     }
 };
 
 
 template<>
-struct _construct_aux<true>
+struct construct_aux<true>
 {
-    template <typename _Iterator>
-    static inline void _destroy(_Iterator _first, _Iterator _end){}
+    template <typename Iterator>
+    static inline void destroy(Iterator first,Iterator last){}
 };
 
 
@@ -62,14 +62,14 @@ struct _construct_aux<true>
 
 
 
-// template <typename _Iterator>
-// inline void _Destroy(_Iterator _first, _Iterator _last)
+// template <typenameIterator>
+// inline voidDestroy(_Iteratorfirst,Iteratorlast)
 // {
-//     using _Value_Type =typename iterator_traits<_Iterator>::value_type;
+//     usingValue_Type =typename iterator_traits<_Iterator>::value_type;
 //     //__has_trivial_destructor是编译器内置函数，判断是否有自定义析构函数
 //     //如果是默认析构函数，则析构函数体内什么也不执行，return 1
 //     //如果是自定义析构函数，return 0
-//     _construct_aux<__has_trivial_destructor(_Value_Type)>::_destroy(_first, _last); 
+//    construct_aux<__has_trivial_destructor(_Value_Type)>::_destroy(_first,last); 
 // }
 
 

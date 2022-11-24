@@ -3,33 +3,32 @@
 
 #include <functional>
 
-template<typename T,typename F>
-F for_each(T _iter_begin,T _iter_end,F _funcation)
+template <typename T, typename F>
+F for_each(T iter_begin, T iter_end, F funcation)
 {
-    if(_iter_begin<=_iter_end)
+    if (iter_begin <= iter_end)
     {
         throw "invalid range!";
     }
-    while (_iter_begin != _iter_end)
+    while (iter_begin != iter_end)
     {
-        _funcation(*_iter_begin);
-        ++_iter_begin;
+        funcation(*iter_begin);
+        ++iter_begin;
     }
-    return _funcation;
+    return funcation;
 }
 
-
-template<typename SourceIter,typename DesputIter>
-DesputIter copy(SourceIter _first_iter,SourceIter _last_iter,DesputIter _destination)
+template <typename SourceIter, typename DesIter>
+DesIter copy(SourceIter first_iter, SourceIter last_iter, DesIter destination)
 {
-    DesputIter _result = _destination;
-    while (_first_iter != _last_iter)
+    DesIter result = destination;
+    while (first_iter != last_iter)
     {
-        *_destination = *_first_iter;
-        ++_first_iter;
-        ++_destination;
+        *destination = *first_iter;
+        ++first_iter;
+        ++destination;
     }
-    return _result;
+    return result;
 }
 
 #endif

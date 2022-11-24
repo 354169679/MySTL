@@ -6,111 +6,107 @@
 
 //先实现第一种配置器
 /*first allocator*/
-template <int __inst>
-class _malloc_allocate
+template <int inst>
+class malloc_allocate
 {
 private:
-    static void *_s_oom_malloc(size_t);
-    static void *_s_oom_realloc(void *, size_t);
+    static void *s_oom_malloc(size_t);
+    static void *s_oom_realloc(void *, size_t);
 
     // function pointor
-    static void (*_malloc_alloc_oom_handler)();
+    static void (*malloc_alloc_oom_handler)();
 
 public:
-    static void *allocate(size_t _n)
+    static void *allocate(size_t n)
     {
-        void *_result = malloc(_n);
-        if (_result == NULL)
-            _result = _s_oom_malloc(_n);
-        return _result;
+        void *result = malloc(n);
+        if (result == NULL)
+            result = s_oom_malloc(n);
+        return result;
     }
 
-    static void deallocate(void *_p, size_t _n)
+    static void deallocate(void *p, size_t n)
     {
-        free(_p);
+        free(p);
     }
 
-    static void *reallocate(void *_p, size_t _new_size)
+    static void *reallocate(void *p, size_t new_size)
     {
-        void *_result = realloc(_p, _new_size);
-        if (_result == NULL)
-            _result = _s_oom_realloc(_p, _new_size);
-        return _result;
+        void *result = realloc(p, new_size);
+        if (result == NULL)
+            result = s_oom_realloc(p, new_size);
+        return result;
     }
 
-    static void (*_set_malloc_handler(void (*_f)()))()
+    static void (*set_malloc_handler(void (*f)()))()
     {
-        void (*_old)() = _malloc_alloc_oom_handler;
-        _malloc_alloc_oom_handler = _f;
-        return _old;
+        void (*old)() = malloc_alloc_oom_handler;
+        malloc_alloc_oom_handler = f;
+        return old;
     }
 };
 
-template <int __inst>
-void (*_malloc_allocate<__inst>::_malloc_alloc_oom_handler)() = 0;
+template <int inst>
+void (*malloc_allocate<inst>::malloc_alloc_oom_handler)() = nullptr;
 
-template <int __inst>
-void *_malloc_allocate<__inst>::_s_oom_malloc(size_t _n)
+template <int inst>
+void *malloc_allocate<inst>::s_oom_malloc(size_t n)
 {
-    void (*_my_malloc_handler)();
-    void *_result;
+    void (*my_malloc_handler)();
+    void *result;
 
-    while(true)
+    while (true)
     {
-        _my_malloc_handler = _malloc_alloc_oom_handler;
-        if(_my_malloc_handler==nullptr)
+        my_malloc_handler = malloc_alloc_oom_handler;
+        if (my_malloc_handler == nullptr)
         {
             throw "bad_alloc";
         }
-        _my_malloc_handler();
-        _result = malloc(_n);
-        if(_result)
-            return _result;
+        my_malloc_handler();
+        result = malloc(n);
+        if (result)
+            return result;
     }
 }
 
-
-template <int __inst>
-void *_malloc_allocate<__inst>::_s_oom_realloc(void *_p, size_t _n)
+template <int inst>
+void *malloc_allocate<inst>::s_oom_realloc(void *p, size_t n)
 {
-    void (*_my_alloc_handler)();
-    void *_result;
+    void (*my_alloc_handler)();
+    void *result;
     while (true)
     {
-        _my_alloc_handler = _malloc_alloc_oom_handler;
-        if(_my_alloc_handler==nullptr)
+        my_alloc_handler = malloc_alloc_oom_handler;
+        if (my_alloc_handler == nullptr)
         {
             throw "bad_reallocate";
         }
-        _my_alloc_handler();
-        _result= realloc(_p, _n);
-        if(_result)
-            return _result;
+        my_alloc_handler();
+        result = realloc(p, n);
+        if (result)
+            return result;
     }
 }
 
+// defaultinst=0
+using malloc_alloc = malloc_allocate<0>;
 
-//default _inst=0
-using malloc_alloc = _malloc_allocate<0>;
-
-template<typename  _T,typename _Alloc>
+template <typename T, typename Alloc>
 class simple_alloc
 {
 public:
-    static _T* allocate(size_t _n)//分配n个T类型对象
+    static T *allocate(size_t n) //分配n个T类型对象
     {
-        return _n == 0 ? 0 : (_T *)_Alloc::allocate(_n * sizeof(_T));
+        return n == 0 ? 0 : (T *)Alloc::allocate(n * sizeof(T));
     }
-    static _T* allocate()
+    static T *allocate()
     {
-        return (_T *)_Alloc::allocate(sizeof(_T));
+        return (T *)Alloc::allocate(sizeof(T));
     }
-    static void deallocate(_T* _p,size_t _n)//释放n个T类型对象
+    static void deallocate(T *p, size_t n) //释放n个T类型对象
     {
-        _Alloc::deallocate(_p, sizeof(_T)*_n);
+        Alloc::deallocate(p, sizeof(T) * n);
     }
 };
-
-
 
 #endif

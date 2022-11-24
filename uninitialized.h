@@ -5,23 +5,23 @@
 #include "construct.h"
 
 template<typename ForwardIterator,typename T_val>
-void uninitialized_fill(ForwardIterator _first,ForwardIterator _last,const T_val& val)
+void uninitialized_fill(ForwardIterator first,ForwardIterator last,const T_val& val)
 {
-    while (_first!=_last)
+    while (first!=last)
     {
-        _construct(&(*_first), val);
-        ++_first;
+       construct(&(*first), val);
+        ++first;
     }
 }
 
 template<typename InputIter,typename DesIter>
-void uninitialized_copy(InputIter _first,InputIter _last,DesIter _destination)
+void uninitialized_copy(InputIter first,InputIter last,DesIter destination)
 {
-    while (_first!=_last)
+    while (first!=last)
     {
-        _construct(&(*_first), *_destination);
-        ++_destination;
-        ++_first;
+       construct(&(*first), *destination);
+        ++destination;
+        ++first;
     }
 }
 

@@ -50,7 +50,7 @@ protected:
     }
 };
 
-template <typename T, typename Alloc = _malloc_allocate<0>> // Alloc depends what allocator will be used
+template <typename T, typename Alloc = malloc_allocate<0>> // Alloc depends what allocator will be used
 class vector : protected vector_base<T, Alloc>              // usage of template "protected"
 {
 public:
@@ -59,31 +59,31 @@ public:
     using size_type = size_t;
     using reference = T &;
     using const_reference = const T &;
-    using base_ = vector_base<T, Alloc>;
-    using allocator_type = typename base_::allocator_type; // usage of "using"
+    using base = vector_base<T, Alloc>;
+    using allocator_type = typename base::allocator_type; // usage of "using"
 
 protected: //使用using
-    using base_::M_allocate;
-    using base_::M_deallocate;
-    using base_::M_end_of_strage;
-    using base_::M_finish;
-    using base_::M_start;
+    using base::M_allocate;
+    using base::M_deallocate;
+    using base::M_end_of_strage;
+    using base::M_finish;
+    using base::M_start;
 
 private:
     void M_insert_aux(iterator, const T &);
-    iterator M_alloc_and_copy(iterator _fist, iterator _last, size_t _n)
+    iterator M_alloc_and_copy(iterator fist, iterator last, size_t n)
     {
-        iterator _result = M_allocate(_n);
-        uninitialized_copy(_fist, _last, _result);
-        return _result;
+        iterator result = M_allocate(n);
+        uninitialized_copy(fist, last, result);
+        return result;
     }
-    void destroy(iterator _begin, iterator _end)
+    void destroy(iterator begin, iterator end)
     {
-        auto temp_first = _begin;
-        while (_begin != _end)
+        auto temp_first =begin;
+        while (begin !=end)
         {
-            _Destroy(_begin);
-            ++_begin;
+           Destroy(begin);
+            ++begin;
         }
     }
 
@@ -95,12 +95,12 @@ private:
 
 public:
     vector() = default;
-    vector(const Alloc &a) : base_(a) {}
-    vector(size_t n, const Alloc &a) : base_(n, a) {} // allocate N of T item
+    vector(const Alloc &a) : base(a) {}
+    vector(size_t n, const Alloc &a) : base(n, a) {} // allocate N of T item
 
     allocator_type get_allocator() const
     {
-        return base_::get_allocator(); // usage funcation of base;
+        return base::get_allocator(); // usage funcation of base;
     }
 
     //踩坑记录
@@ -164,7 +164,7 @@ public:
     {
         if (M_end_of_strage != M_finish)
         {
-            _construct(M_finish, val);
+           construct(M_finish, val);
             ++M_finish;
         }
         else
@@ -222,7 +222,7 @@ public:
     {
         require_vector_no_empty();
         --M_finish;
-        _Destroy(M_finish);
+       Destroy(M_finish);
     }
 
     void clear()noexcept
@@ -253,30 +253,30 @@ public:
 // source         M_start---M_finish(length)
 
 template <typename T, typename Alloc>
-vector<T, Alloc> &vector<T, Alloc>::operator=(const vector<T, Alloc> &_v)
+vector<T, Alloc> &vector<T, Alloc>::operator=(const vector<T, Alloc> &v)
 {
-    if (&_v != this)
+    if (&v != this)
     {
-        const size_t _v_len = _v.length();
-        if (capacity() < _v_len)
+        const size_t v_len =v.length();
+        if (capacity() <v_len)
         {
-            iterator _begin = M_alloc_and_copy(_v.begin(), _v.end(), _v_len);
+            iterator temp_begin = M_alloc_and_copy(v.begin(),v.end(),v_len);
             destroy(begin(), end());
             M_deallocate(begin(), capacity());
-            M_start = _begin;
+            M_start =temp_begin;
             M_end_of_strage = M_finish;
         }
-        else if (capacity() >= _v_len && size() > _v_len)
+        else if (capacity() >=v_len && size() >v_len)
         {
-            copy(_v.begin(), _v.begin() + size(), begin());
-            uninitialized_copy(_v.begin() + size(), _v.end(), end());
+            copy(v.begin(),v.begin() + size(), begin());
+            uninitialized_copy(v.begin() + size(),v.end(), end());
         }
         else
         {
-            copy(_v.begin(), _v.end(), M_start);
-            destroy(M_start + _v_len, M_finish);
+            copy(v.begin(),v.end(), M_start);
+            destroy(M_start +v_len, M_finish);
         }
-        M_finish = M_start + _v_len;
+        M_finish = M_start +v_len;
     }
     return *this;
 }
@@ -286,7 +286,7 @@ void vector<T, Alloc>::M_insert_aux(iterator position, const T &val)
 {
     if (M_end_of_strage != M_finish)
     {
-        _construct(M_finish, *(M_finish - 1));
+       construct(M_finish, *(M_finish - 1));
     }
     else
     {
