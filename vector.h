@@ -62,7 +62,7 @@ public:
     using base_ = vector_base<T, Alloc>;
     using allocator_type = typename base_::allocator_type; // usage of "using"
 
-protected: //使用using
+protected: //使用using声明
     using base_::M_allocate;
     using base_::M_deallocate;
     using base_::M_end_of_strage;
