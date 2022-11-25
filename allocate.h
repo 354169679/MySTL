@@ -4,6 +4,33 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+// C++ Allocator Standard Interface
+template <typename T, typename Alloc>
+class simple_alloc
+{
+public:
+    static T *allocate() //分配1个T类型对象
+    {
+        return (T *)Alloc::allocate(sizeof(T));
+    }
+
+    static T *allocate(size_t n) //分配n个T类型对象
+    {
+        return n == 0 ? 0 : (T *)Alloc::allocate(n * sizeof(T));
+    }
+
+    static void deallocate(T *p)
+    {
+        Alloc::deallocate(p, sizeof(T));
+    }
+
+    static void deallocate(T *p, size_t n) //释放n个T类型对象
+    {
+        if(n!=0)//n!=0细节!
+        Alloc::deallocate(p, sizeof(T) * n);
+    }
+};
+
 //先实现第一种配置器
 /*first allocator*/
 template <int inst>
@@ -88,25 +115,7 @@ void *malloc_allocate<inst>::s_oom_realloc(void *p, size_t n)
     }
 }
 
-// defaultinst=0
+// default allocate function
 using malloc_alloc = malloc_allocate<0>;
-
-template <typename T, typename Alloc>
-class simple_alloc
-{
-public:
-    static T *allocate(size_t n) //分配n个T类型对象
-    {
-        return n == 0 ? 0 : (T *)Alloc::allocate(n * sizeof(T));
-    }
-    static T *allocate()
-    {
-        return (T *)Alloc::allocate(sizeof(T));
-    }
-    static void deallocate(T *p, size_t n) //释放n个T类型对象
-    {
-        Alloc::deallocate(p, sizeof(T) * n);
-    }
-};
 
 #endif

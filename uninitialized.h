@@ -14,6 +14,9 @@ void uninitialized_fill(ForwardIterator first,ForwardIterator last,const T_val& 
     }
 }
 
+
+template<typename 
+
 template<typename InputIter,typename DesIter>
 void uninitialized_copy(InputIter first,InputIter last,DesIter destination)
 {

@@ -20,11 +20,11 @@ protected:
 protected:
     vector_base() : M_start(nullptr), M_finish(nullptr), M_end_of_strage(nullptr) {}
     vector_base(const Alloc &) : M_start(nullptr), M_finish(nullptr), M_end_of_strage(nullptr) {}
-    vector_base(size_t n, const Alloc &a)
+    vector_base(size_t n_, const Alloc &a_)
     {
-        M_start = M_allocate(n);
+        M_start = M_allocate(n_);
         M_finish = M_start;
-        M_end_of_strage = M_start + n; //内存++根据变量大小
+        M_end_of_strage = M_start + n_; //内存++根据变量大小
     }
 
     ~vector_base()
@@ -34,14 +34,14 @@ protected:
     }
 
     // 分配n个vector_base<T>对象的内存
-    T *M_allocate(size_t n)
+    T *M_allocate(size_t n_)
     {
-        return M_data_allocator::allocate(n);
+        return M_data_allocator::allocate(n_);
     }
     // 释放由p指向n个vector_base<T>对象的内存
-    void M_deallocate(T *p, size_t n)
+    void M_deallocate(T *p_, size_t n_)
     {
-        M_data_allocator::deallocate(p, n);
+        M_data_allocator::deallocate(p_, n_);
     }
 
     allocator_type get_allocator() const
@@ -71,19 +71,19 @@ protected: //使用using声明
 
 private:
     void M_insert_aux(iterator, const T &);
-    iterator M_alloc_and_copy(iterator fist, iterator last, size_t n)
+    iterator M_alloc_and_copy(iterator fist_, iterator last_, size_t n_)
     {
-        iterator result = M_allocate(n);
-        uninitialized_copy(fist, last, result);
+        iterator result = M_allocate(n_);
+        uninitialized_copy(fist_, last_, result);
         return result;
     }
-    void destroy(iterator begin, iterator end)
+    void destroy(iterator begin_, iterator end_)
     {
-        auto temp_first =begin;
-        while (begin !=end)
+        auto temp_first =begin_;
+        while (begin_ !=end_)
         {
-           Destroy(begin);
-            ++begin;
+           Destroy(begin_);
+            ++begin_;
         }
     }
 
@@ -96,7 +96,7 @@ private:
 public:
     vector() = default;
     vector(const Alloc &a) : base_(a) {}
-    vector(size_t n, const Alloc &a) : base_(n, a) {} // allocate N of T item
+    vector(size_t n, const Alloc &a) : base_(n_, a_) {} // allocate N of T item
     vector(size_t n,const T& val)
     {
         M_start= M_allocate(n);
@@ -295,6 +295,7 @@ void vector<T, Alloc>::M_insert_aux(iterator position, const T &val)
     }
     else
     {
+        
     }
 }
 

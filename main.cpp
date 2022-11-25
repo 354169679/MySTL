@@ -2,22 +2,22 @@
 #include "vector.h"
 #include <iostream>
 
-class main_class
+
+template<typename T>
+class MyIter
 {
-private:
-    /* data */
-public:
-    void fun() const{
-        std::cout << "123";
-    }
-    // void fun(){
-    //     std::cout << "22";
-    // }
+    public:
+        using value_type=T;
 };
+
+template<typename T>
+typename T::value_type find(T iter)
+{
+    return iter;
+}
 
 int main()
 {
-    std::vector<int> a;
-
-    
+    vector<std::string> v;
+    auto p=v.begin();
 }
